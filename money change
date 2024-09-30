@@ -1,0 +1,25 @@
+
+local statsHandler = require(game.ServerScriptService.ServerMain.StatsHandler)
+
+local commandModule = {}
+
+
+function commandModule.execute(Admin, Number)
+    local num = tonumber(Number)
+
+    if not num then
+        warn("Invalid number provided.")
+        return
+    end
+
+    local cash = statsHandler:GetCash(Admin)
+
+    
+    statsHandler:ChangeCash(Admin, -cash)
+    wait(0.1)
+
+    
+    statsHandler:ChangeCash(Admin, num)
+end
+
+return commandModule
