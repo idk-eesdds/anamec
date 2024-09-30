@@ -1,0 +1,30 @@
+local function createESP(player)
+    if player.Character then
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "ESPHighlight"
+        highlight.Adornee = player.Character
+        highlight.FillTransparency = 0.5  -- Transparency of the ESP box (0 = solid, 1 = fully transparent)
+        highlight.OutlineTransparency = 0  -- Outline transparency
+        highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red fill color
+        highlight.OutlineColor = Color3.fromRGB(0, 255, 0) -- Green outline color
+        highlight.Parent = player.Character
+
+        -- Remove ESP if the player respawns
+        player.CharacterAdded:Connect(function(newCharacter)
+            highlight.Adornee = newCharacter
+            highlight.Parent = newCharacter
+        end)
+    end
+end
+
+-- Add ESP to all players in the game
+for _, player in pairs(game.Players:GetPlayers()) do
+    createESP(player)
+end
+
+-- Add ESP to any new players that join the game
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        createESP(player)
+    end)
+end)
