@@ -1,0 +1,25 @@
+local killEvent = Instance.new("RemoteEvent")
+killEvent.Name = "KillAllPlayers"
+killEvent.Parent = game.ReplicatedStorage
+
+-- Function to kill all players
+local function killAllPlayers()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.Health = 0  -- Set player's health to 0 to kill them
+        end
+    end
+end
+
+-- Event listener for kill requests from the client
+killEvent.OnServerEvent:Connect(function(player)
+    killAllPlayers()  -- Execute kill command
+end)
+
+-- Automatically call the kill function when the script is executed
+local function executeKill()
+    killAllPlayers()  -- Call to kill all players immediately
+end
+
+-- Execute the kill function directly
+executeKill()
