@@ -1,0 +1,36 @@
+local teleportEvent = Instance.new("RemoteEvent")
+teleportEvent.Name = "TeleportAllPlayers"
+teleportEvent.Parent = game.ReplicatedStorage
+
+-- Function to teleport all players to the command executor's position
+local function teleportAllPlayers(executingPlayer)
+    local targetCharacter = executingPlayer.Character
+    if not targetCharacter or not targetCharacter:FindFirstChild("HumanoidRootPart") then
+        warn("Could not find the target player's character or HumanoidRootPart.")
+        return
+    end
+
+    -- Get the position of the executing player
+    local targetPosition = targetCharacter.HumanoidRootPart.Position
+
+    -- Teleport all players to the executing player's position
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetPosition + Vector3.new(5, 0, 0))  -- Slight offset to avoid stacking
+        end
+    end
+end
+
+-- Event listener for teleport requests from the client
+teleportEvent.OnServerEvent:Connect(function(player)
+    teleportAllPlayers(player)
+end)
+
+-- Execute command for the player when the script is run
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        -- Automatically fire the event to teleport all players
+        teleportEvent:FireClient(player)  -- Allows the specific player to execute the command
+        teleportEvent:FireServer(player)   -- Triggers the teleportation on the server
+    end)
+end)
